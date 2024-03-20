@@ -28,6 +28,7 @@ public class Util {
 
     @PostConstruct
     public void init() {
+        // создаю роли
         Role roleUser = new Role(1, "ROLE_USER");
         Role roleAdmin = new Role(2, "ROLE_ADMIN");
         roleService.addRole(roleUser);
