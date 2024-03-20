@@ -31,16 +31,6 @@ public class AdminController {
     }
 
     @GetMapping()
-    public String adminInfo(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        model.addAttribute("user", user);
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        model.addAttribute("authorities", authorities);
-        return "user";
-    }
-
-    @GetMapping("/all")
     public String showAllUsers(Model model) {
         model.addAttribute("users", adminServiceCRUD. getListAllUsers());
         return "all_users";
