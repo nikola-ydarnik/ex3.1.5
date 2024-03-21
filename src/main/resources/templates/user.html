@@ -6,8 +6,8 @@
 </head>
 <body>
 
-<div th:each="auth : ${authorities}">
-    <div th:if="${auth.authority == 'ROLE_ADMIN'}">
+<div th:each="role : ${user.getAuthorities()}">
+    <div th:if="${role.getAuthority() == 'ROLE_ADMIN'}">
         <h1>Admin Page</h1>
     </div>
 </div>
@@ -44,8 +44,8 @@
     </tr>
 </table>
 <br>
-<div th:each="auth : ${authorities}">
-    <div th:if="${auth.authority == 'ROLE_ADMIN'}">
+<div th:each="role : ${user.getAuthorities()}">
+    <div th:if="${role.getAuthority() == 'ROLE_ADMIN'}">
         <button onclick="window.location.href='/admin/all'">Manage users</button>
     </div>
 </div>

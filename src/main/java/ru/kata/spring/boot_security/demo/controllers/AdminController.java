@@ -9,8 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
-import ru.kata.spring.boot_security.demo.service.AdminServiceCRUD;
+import ru.kata.spring.boot_security.demo.service.RoleSerivce;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -20,14 +20,13 @@ import java.util.*;
 public class AdminController {
 
 
-    private final RoleRepository roleRepository;
-    private final AdminServiceCRUD adminServiceCRUD;
+    private final RoleSerivce roleSerivce;
+    private final UserService userService;
 
     @Autowired
-    public AdminController(RoleRepository roleRepository, AdminServiceCRUD adminServiceCRUD) {
-
-        this.roleRepository = roleRepository;
-        this.adminServiceCRUD = adminServiceCRUD;
+    public AdminController(RoleSerivce roleSerivce, UserService userService) {
+        this.roleSerivce = roleSerivce;
+        this.userService = userService;
     }
 
     @GetMapping()
@@ -42,14 +41,14 @@ public class AdminController {
 
     @GetMapping("/all")
     public String showAllUsers(Model model) {
-        model.addAttribute("users", adminServiceCRUD. getListAllUsers());
+        model.addAttribute("users", userService. getListAllUsers());
         return "all_users";
     }
 
     @GetMapping("/new")
     public String createNewUser(Model model) {
         model.addAttribute("user", new User());
-        model.addAttribute("roles", roleRepository.findAll());
+        model.addAttribute("roles", roleSerivce.findAll());
         return "create_user";
     }
 
@@ -60,21 +59,21 @@ public class AdminController {
                               Model model) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("roles", roleRepository.findAll());
+            model.addAttribute("roles", roleSerivce.findAll());
             return "create_user";
         }
 
         boolean isUserSaved;
         if (roleName == null) {
-            isUserSaved = adminServiceCRUD.saveUser(user);
+            isUserSaved = userService.saveUser(user);
         } else {
-            isUserSaved = adminServiceCRUD.saveUser(user,roleName);
+            isUserSaved = userService.saveUser(user,roleName);
         }
 
         if (isUserSaved) {
             return "redirect:/admin/all";
         } else {
-            model.addAttribute("roles", roleRepository.findAll());
+            model.addAttribute("roles", roleSerivce.findAll());
             model.addAttribute("errorMessage", "User is already exists.");
             return "create_user";
         }
@@ -83,8 +82,8 @@ public class AdminController {
     @GetMapping("/{id}/edit")
     public String updateUser(Model model,
                              @PathVariable("id") int id) {
-        model.addAttribute("user", adminServiceCRUD.findUserById(id));
-        model.addAttribute("roles", roleRepository.findAll());
+        model.addAttribute("user", userService.findUserById(id));
+        model.addAttribute("roles", roleSerivce.findAll());
         return "update_user";
     }
 
@@ -95,17 +94,17 @@ public class AdminController {
                                  Model model) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("roles", roleRepository.findAll());
+            model.addAttribute("roles", roleSerivce.findAll());
             return "update_user";
         }
-        adminServiceCRUD.updateUser(user, rolesFromView);
+        userService.updateUser(user, rolesFromView);
         return "redirect:/admin/all";
     }
 
     @PostMapping("/{id}")
     public String deleteUser(@PathVariable("id") int id,
                              @ModelAttribute("user") User user) {
-        adminServiceCRUD.deleteUser(id);
+        userService.deleteUser(id);
         return "redirect:/admin/all";
     }
 }

@@ -1,29 +1,42 @@
 package ru.kata.spring.boot_security.demo.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import javax.transaction.Transactional;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
+import java.util.Optional;
+import java.util.Collections;
 
 @Service
-public class AdminServiceCRUD {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final RoleSerivce roleSerivce;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public AdminServiceCRUD(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, RoleSerivce roleSerivce, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+        this.roleSerivce = roleSerivce;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+
+    }
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findUserByName(username);
+
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return user.get();
     }
 
     @Transactional
@@ -41,7 +54,7 @@ public class AdminServiceCRUD {
         if (userRepository.findUserByName(user.getName()).isPresent()) {
             return false;
         }
-        Set<Role> roles = roleRepository.findByRoleNameIn(rolesFromView);
+        Set<Role> roles = roleSerivce.findByRoleNameIn(rolesFromView);
         user.setRoles(roles);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -68,20 +81,19 @@ public class AdminServiceCRUD {
     }
     @Transactional
     public void updateUser(User user, List<String> rolesFromView) {
-        User userFromDB = userRepository.findUserById(user.getId());
-        userFromDB.setName(user.getName());
-        userFromDB.setSurname(user.getSurname());
-        userFromDB.setAge(user.getAge());
-        userFromDB.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         if (rolesFromView == null) {
             user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
         } else {
-            Set<Role> roles = roleRepository.findByRoleNameIn(rolesFromView);
-            userFromDB.setRoles(roles);
+            user.setRoles(roleSerivce.findByRoleNameIn(rolesFromView));
         }
+        userRepository.save(user);
     }
     @Transactional
     public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
 }
+
+
