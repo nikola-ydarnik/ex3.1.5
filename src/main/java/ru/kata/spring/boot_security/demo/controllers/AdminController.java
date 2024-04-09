@@ -1,21 +1,26 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleSerivce;
 import ru.kata.spring.boot_security.demo.service.UserService;
+import ru.kata.spring.boot_security.demo.util.UserErrorResponse;
+import ru.kata.spring.boot_security.demo.util.UserNotCreatedException;
 
 import javax.validation.Valid;
 import java.util.*;
 
-@Controller
+@RestController
 @RequestMapping("/admin")
 public class AdminController {
 
@@ -30,72 +35,61 @@ public class AdminController {
     }
 
     @GetMapping()
-    public String showAllUsers(Model model) {
-        model.addAttribute("users", userService. getListAllUsers());
-        return "all_users";
+    public ResponseEntity<List<User>> showAllUsers() {
+        return new ResponseEntity<>(userService.getListAllUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("/new")
-    public String createNewUser(Model model) {
-        model.addAttribute("user", new User());
-        model.addAttribute("roles", roleSerivce.findAll());
-        return "create_user";
-    }
-
-    @PostMapping("/create")
-    public String saveNewUser(@ModelAttribute("user") @Valid User user,
-                              BindingResult bindingResult,
-                              @RequestParam(value = "roles1", required = false) List<String> roleName,
-                              Model model) {
-
+//
+    @PostMapping("")
+    public ResponseEntity<HttpStatus> saveNewUser(@RequestBody @Valid User user,
+                                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("roles", roleSerivce.findAll());
-            return "create_user";
+           StringBuilder errorMsg = new StringBuilder();
+           for (FieldError error: bindingResult.getFieldErrors()) {
+               errorMsg.append(error.getField())
+                       .append(" - ").append(error.getDefaultMessage())
+                       .append(";");
+           }
+           throw new UserNotCreatedException(errorMsg.toString());
         }
 
-        boolean isUserSaved;
-        if (roleName == null) {
-            isUserSaved = userService.saveUser(user);
-        } else {
-            isUserSaved = userService.saveUser(user,roleName);
-        }
-
-        if (isUserSaved) {
-            return "redirect:/admin/all";
-        } else {
-            model.addAttribute("roles", roleSerivce.findAll());
-            model.addAttribute("errorMessage", "User is already exists.");
-            return "create_user";
-        }
+        userService.saveUser(user);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+    @ExceptionHandler
+    private ResponseEntity<UserErrorResponse> handleException(UserNotCreatedException e) {
+        UserErrorResponse response = new UserErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/{id}/edit")
-    public String updateUser(Model model,
-                             @PathVariable("id") int id) {
-        model.addAttribute("user", userService.findUserById(id));
-        model.addAttribute("roles", roleSerivce.findAll());
-        return "update_user";
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
+        return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
     }
+//
+//    @GetMapping("/{id}/edit")
+//    public String updateUser(Model model,
+//                             @PathVariable("id") int id) {
+//        model.addAttribute("user", userService.findUserById(id));
+//        model.addAttribute("roles", roleSerivce.findAll());
+//        return "update_user";
+//    }
+//
+    @PutMapping("")
+    public ResponseEntity<HttpStatus> saveUpdateUser(@RequestBody User user,
+                                 BindingResult bindingResult) {
 
-    @PostMapping("/update")
-    public String saveUpdateUser(@ModelAttribute("user") @Valid User user,
-                                 BindingResult bindingResult,
-                                 @RequestParam(value = "rolesFromView", required = false) List<String> rolesFromView,
-                                 Model model) {
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("roles", roleSerivce.findAll());
-            return "update_user";
-        }
-        userService.updateUser(user, rolesFromView);
-        return "redirect:/admin/all";
+        userService.updateUser(user);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
-
-    @PostMapping("/{id}")
-    public String deleteUser(@PathVariable("id") int id,
-                             @ModelAttribute("user") User user) {
+//
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") int id) {
         userService.deleteUser(id);
-        return "redirect:/admin/all";
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }
 

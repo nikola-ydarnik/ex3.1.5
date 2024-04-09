@@ -16,7 +16,7 @@ public interface UserService extends UserDetailsService {
 
     public boolean saveUser(User user);
 
-    public boolean saveUser(User user, List<String> rolesFromView);
+//    public boolean saveUser(User user, List<String> rolesFromView);
 
     public boolean saveUser(User user, Set<Role> roles);
 
@@ -24,7 +24,7 @@ public interface UserService extends UserDetailsService {
 
     public User findUserById(int id);
 
-    public void updateUser(User user, List<String> rolesFromView);
+    public void updateUser(User user);
 
     public void deleteUser(int id);
 }
