@@ -30,8 +30,8 @@ public class UserServiceImpl implements UserService {
 
     }
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findUserByName(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findUserByEmail(email);
 
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found");
@@ -49,17 +49,17 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return true;
     }
-    @Transactional
-    public boolean saveUser(User user, List<String> rolesFromView) {
-        if (userRepository.findUserByName(user.getName()).isPresent()) {
-            return false;
-        }
-        Set<Role> roles = roleSerivce.findByRoleNameIn(rolesFromView);
-        user.setRoles(roles);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return true;
-    }
+//    @Transactional
+//    public boolean saveUser(User user, Set<Role> rolesFromView) {
+//        if (userRepository.findUserByName(user.getName()).isPresent()) {
+//            return false;
+//        }
+//        Set<Role> roles = roleSerivce.findByRoleNameIn(rolesFromView);
+//        user.setRoles(roles);
+//        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+//        userRepository.save(user);
+//        return true;
+//    }
 
     @Transactional
     public boolean saveUser(User user, Set<Role> roles) {
@@ -80,16 +80,11 @@ public class UserServiceImpl implements UserService {
         return user.orElse(new User());
     }
     @Transactional
-    public void updateUser(User user, List<String> rolesFromView) {
-
+    public void updateUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        if (rolesFromView == null) {
-            user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
-        } else {
-            user.setRoles(roleSerivce.findByRoleNameIn(rolesFromView));
-        }
         userRepository.save(user);
     }
+
     @Transactional
     public void deleteUser(int id) {
         userRepository.deleteById(id);

@@ -35,12 +35,10 @@ public class Util {
         roleSerivce.addRole(roleAdmin);
 
         // для входа
-        userService.saveUser(new User("user", "user", "userovich", 27),
+        userService.saveUser(new User("user", "user", "userovich", 27, "user@mail.com"),
                 new HashSet<Role>(Set.of(roleAdmin, roleUser)));
-
-        userService.saveUser(new User("Nick", "100", "Tikhonov", 27),
-                new HashSet<Role>(Set.of(roleAdmin, roleUser)));
-        userService.saveUser(new User("Mari", "200", "Tikhonova", 26));
-        userService.saveUser(new User("Misha","300", "Voloshkin", 34));
+        userService.saveUser(new User("user2", "user2", "usereovich2", 28, "user2@mail.com"));
+//        userService.saveUser(new User("Mari", "200", "Tikhonova", 26, "user@mail.com"));
+//        userService.saveUser(new User("Misha","300", "Voloshkin", 34, "user@mail.com"));
     }
 }
