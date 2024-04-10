@@ -3,11 +3,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     await fillTableOfAllUsers();
     await fillTableAboutCurrentUser();
     await addNewUserForm();
-    await fillDeleteModal();
-    await fillEditModal();
+    await DeleteModalHandler();
+    await EditModalHandler();
 });
 
+const ROLE_USER = {roleId: 1, roleName: "ROLE_USER"};
+const ROLE_ADMIN = {roleId: 2, roleName: "ROLE_ADMIN"};
 //емаил пользователя в навбаре
+
 async function showUserEmailOnNavbar() {
     const currentUserEmailNavbar = document.getElementById("currentUserEmailNavbar")
     const currentUser = await dataAboutCurrentUser();

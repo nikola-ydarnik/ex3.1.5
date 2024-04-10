@@ -1,5 +1,5 @@
 async function getUserDataById(userId) {
-    const response = await fetch(`/admin/${userId}`);
+    const response = await fetch(`/api/admin/${userId}`);
     return await response.json();
 }
 
@@ -17,6 +17,10 @@ async function fillModal(modal) {
         const lastNameInput = modalBody.querySelector("input[data-user-id='lastName']");
         const ageInput = modalBody.querySelector("input[data-user-id='age']");
         const emailInput = modalBody.querySelector("input[data-user-id='email']");
+        const passwordInput = modalBody.querySelector("input[data-user-id='password']");
+        if (passwordInput !== null) {
+            passwordInput.value = user.password;
+        }
 
         idInput.value = user.id;
         firstNameInput.value = user.name;
@@ -24,11 +28,13 @@ async function fillModal(modal) {
         ageInput.value = user.age;
         emailInput.value = user.email;
 
+
+
         let rolesSelect= modalBody.querySelector("select[data-user-id='roles']")
         let userRolesHTML = "";
         for (let i = 0; i < user.roles.length; i++) {
             userRolesHTML +=
-                `<option>${user.roles[i].roleNameWithoutRole}</option>`;
+                `<option value="${user.roles[i].roleName}">${user.roles[i].roleNameWithoutRole}</option>`;
         }
         rolesSelect.innerHTML = userRolesHTML;
     })

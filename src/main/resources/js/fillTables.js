@@ -1,11 +1,11 @@
 
 async function dataAboutAllUsers() {
-    const response = await fetch("/admin");
+    const response = await fetch("/api/admin");
     return await response.json();
 }
 
 async function dataAboutCurrentUser() {
-    const response = await fetch("/user")
+    const response = await fetch("/api/user")
     return await response.json();
 }
 
