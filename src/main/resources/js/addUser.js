@@ -1,5 +1,5 @@
 async function createNewUser(user) {
-        await fetch("/admin",
+        await fetch("/api/admin",
         {method: 'POST',headers: {'Content-Type': 'application/json'}, body: JSON.stringify(user)})
 }
 
@@ -15,11 +15,8 @@ async function addNewUserForm() {
         const email = newUserForm.querySelector("#email").value.trim();
         const password = newUserForm.querySelector("#password").value.trim();
 
-        const rolesUser = {roleId: 1, roleName: "ROLE_USER"};
-        const rolesAdmin = {roleId: 2, roleName: "ROLE_ADMIN"};
-
         let roles = [];
-        roles.push(rolesUser, rolesAdmin)
+        roles.push(ROLE_USER, ROLE_ADMIN)
 
         const newUserData = {
             name: name,

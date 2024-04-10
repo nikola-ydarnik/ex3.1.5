@@ -3,11 +3,6 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +16,7 @@ import javax.validation.Valid;
 import java.util.*;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
 
 
@@ -39,8 +34,7 @@ public class AdminController {
         return new ResponseEntity<>(userService.getListAllUsers(), HttpStatus.OK);
     }
 
-//
-    @PostMapping("")
+    @PostMapping()
     public ResponseEntity<HttpStatus> saveNewUser(@RequestBody @Valid User user,
                                                   BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -56,32 +50,15 @@ public class AdminController {
         userService.saveUser(user);
         return ResponseEntity.ok(HttpStatus.OK);
     }
-    @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(UserNotCreatedException e) {
-        UserErrorResponse response = new UserErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
         return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
     }
-//
-//    @GetMapping("/{id}/edit")
-//    public String updateUser(Model model,
-//                             @PathVariable("id") int id) {
-//        model.addAttribute("user", userService.findUserById(id));
-//        model.addAttribute("roles", roleSerivce.findAll());
-//        return "update_user";
-//    }
-//
-    @PutMapping("")
+
+    @PutMapping()
     public ResponseEntity<HttpStatus> saveUpdateUser(@RequestBody User user,
                                  BindingResult bindingResult) {
-
         userService.updateUser(user);
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -90,6 +67,15 @@ public class AdminController {
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") int id) {
         userService.deleteUser(id);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<UserErrorResponse> handleException(UserNotCreatedException e) {
+        UserErrorResponse response = new UserErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
 
