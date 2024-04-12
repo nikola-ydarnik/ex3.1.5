@@ -15,8 +15,16 @@ async function addNewUserForm() {
         const email = newUserForm.querySelector("#email").value.trim();
         const password = newUserForm.querySelector("#password").value.trim();
 
+        const rolesSelected = document.getElementById("roles");
+
         let roles = [];
-        roles.push(ROLE_USER, ROLE_ADMIN)
+        for (let option of rolesSelected.selectedOptions) {
+            if(option.value === ROLE_USER.roleName) {
+                roles.push(ROLE_USER);
+            } else if (option.value === ROLE_ADMIN.roleName) {
+                roles.push(ROLE_ADMIN);
+            }
+        }
 
         const newUserData = {
             name: name,

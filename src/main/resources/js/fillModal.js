@@ -29,13 +29,25 @@ async function fillModal(modal) {
         emailInput.value = user.email;
 
 
+        let rolesSelect = HTMLSelectElement;
 
-        let rolesSelect= modalBody.querySelector("select[data-user-id='roles']")
+        let rolesSelectDelete = modalBody.querySelector("select[data-user-id='rolesDelete']");
+        let rolesSelectEdit = modalBody.querySelector("select[data-user-id='rolesEdit']");
         let userRolesHTML = "";
-        for (let i = 0; i < user.roles.length; i++) {
+
+        if (rolesSelectDelete !== null) {
+            rolesSelect = rolesSelectDelete;
+            for (let i = 0; i < user.roles.length; i++) {
+                userRolesHTML +=
+                    `<option value="${user.roles[i].roleName}">${user.roles[i].roleNameWithoutRole}</option>`;
+            }
+        } else if (rolesSelectEdit !== null) {
+            rolesSelect = rolesSelectEdit;
             userRolesHTML +=
-                `<option value="${user.roles[i].roleName}">${user.roles[i].roleNameWithoutRole}</option>`;
+                `<option value="ROLE_USER">USER</option>
+                 <option value="ROLE_ADMIN">ADMIN</option>`
         }
+
         rolesSelect.innerHTML = userRolesHTML;
     })
 }

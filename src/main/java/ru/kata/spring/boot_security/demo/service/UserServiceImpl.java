@@ -42,25 +42,26 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public boolean saveUser(User user) {
-        if (userRepository.findUserByName(user.getName()).isPresent()) {
-            return false;
+//        if (userRepository.findUserByName(user.getName()).isPresent()) {
+//            return false;
+//        }
+
+//        user.getRoles().forEach(role -> {
+//            if (role.getId() == 1) {
+//                roleSerivce.addRole(new Role(1, "ROLE_USER"));
+//            } else if (role.getId() == 2) {
+//                roleSerivce.addRole(new Role(2, "ROLE_ADMIN"));
+//            }
+//        });
+        if (user.getRoles() == null) {
+            user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
         }
-        user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
+        user.getRoles().forEach(role -> roleSerivce.addRole(role));
+
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;
     }
-//    @Transactional
-//    public boolean saveUser(User user, Set<Role> rolesFromView) {
-//        if (userRepository.findUserByName(user.getName()).isPresent()) {
-//            return false;
-//        }
-//        Set<Role> roles = roleSerivce.findByRoleNameIn(rolesFromView);
-//        user.setRoles(roles);
-//        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-//        userRepository.save(user);
-//        return true;
-//    }
 
     @Transactional
     public boolean saveUser(User user, Set<Role> roles) {
@@ -82,6 +83,10 @@ public class UserServiceImpl implements UserService {
     }
     @Transactional
     public void updateUser(User user) {
+        if (user.getRoles() == null) {
+            user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
+        }
+        user.getRoles().forEach(role -> roleSerivce.addRole(role));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }

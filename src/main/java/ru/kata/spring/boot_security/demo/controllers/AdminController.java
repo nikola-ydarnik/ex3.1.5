@@ -37,16 +37,15 @@ public class AdminController {
     @PostMapping()
     public ResponseEntity<HttpStatus> saveNewUser(@RequestBody @Valid User user,
                                                   BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-           StringBuilder errorMsg = new StringBuilder();
-           for (FieldError error: bindingResult.getFieldErrors()) {
-               errorMsg.append(error.getField())
-                       .append(" - ").append(error.getDefaultMessage())
-                       .append(";");
-           }
-           throw new UserNotCreatedException(errorMsg.toString());
-        }
-
+//        if (bindingResult.hasErrors()) {
+//           StringBuilder errorMsg = new StringBuilder();
+//           for (FieldError error: bindingResult.getFieldErrors()) {
+//               errorMsg.append(error.getField())
+//                       .append(" - ").append(error.getDefaultMessage())
+//                       .append(";");
+//           }
+//           throw new UserNotCreatedException(errorMsg.toString());
+//        }
         userService.saveUser(user);
         return ResponseEntity.ok(HttpStatus.OK);
     }

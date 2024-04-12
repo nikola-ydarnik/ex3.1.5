@@ -12,4 +12,7 @@ public interface RoleSerivce {
     public List<Role> findAll();
 
     public Set<Role> findByRoleNameIn(List<String> roles);
+
+    public void updateRole(Role role);
+
 }

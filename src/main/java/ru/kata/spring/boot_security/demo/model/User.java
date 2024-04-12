@@ -26,26 +26,26 @@ public class User implements UserDetails{
     private int id;
 
     @Column(name = "name")
-    @NotEmpty(message = "password shold be not empty")
-    @Size(min = 2, max = 100, message = "surname should be between 2 and 100")
+//    @NotEmpty(message = "password shold be not empty")
+//    @Size(min = 2, max = 100, message = "surname should be between 2 and 100")
     private String name;
 
     @Column(name = "password")
-    @NotEmpty(message = "password shold be not empty")
+//    @NotEmpty(message = "password shold be not empty")
     private String password;
 
     @Column(name = "surname")
-    @NotEmpty(message = "password shold be not empty")
-    @Size(min = 2, max = 150, message = "surname should be between 2 and 150")
+//    @NotEmpty(message = "password shold be not empty")
+//    @Size(min = 2, max = 150, message = "surname should be between 2 and 150")
     private String surname;
 
     @Column(name = "age")
-    @Min(value = 0, message = "age should be more than 0")
+//    @Min(value = 0, message = "age should be more than 0")
     private int age;
 
     @Column(name = "email")
-    @NotEmpty(message = "email shold be not empty")
-    @Email
+//    @NotEmpty(message = "email shold be not empty")
+//    @Email
     private String email;
 
 
