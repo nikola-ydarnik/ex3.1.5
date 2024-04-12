@@ -30,4 +30,8 @@ public class RoleServiceImpl implements RoleSerivce {
     public Set<Role> findByRoleNameIn(List<String> roles) {
         return roleRepository.findByRoleNameIn(roles);
     }
+
+    public void updateRole(Role role) {
+        roleRepository.save(role);
+    }
 }

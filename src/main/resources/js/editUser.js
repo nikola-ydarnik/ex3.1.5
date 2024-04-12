@@ -13,20 +13,16 @@ const formEdit = document.getElementById("modalBodyEdit");
 document.addEventListener("submit", async function(event){
     event.preventDefault();
 
-    const rolesSelect = document.getElementById("rolesEdit");
-    let roles = [ROLE_USER, ROLE_ADMIN];
+    const rolesSelected = document.getElementById("rolesEdit");
 
-    // if (rolesSelect.options.length === 0) {
-    //     roles.push(ROLE_USER);
-    // }
-
-    // for (let option of rolesSelect.options) {
-    //     if (option.selected.value === ROLE_USER.roleName) {
-    //         roles.push(ROLE_USER);
-    //     } else if (option.selected.value === ROLE_ADMIN.roleName){
-    //         roles.push(ROLE_ADMIN);
-    //     }
-    // }
+    let roles = [];
+    for (let option of rolesSelected.selectedOptions) {
+        if(option.value === ROLE_USER.roleName) {
+            roles.push(ROLE_USER);
+        } else if (option.value === ROLE_ADMIN.roleName) {
+            roles.push(ROLE_ADMIN);
+        }
+    }
 
     let user = {
         id: document.getElementById("idEdit").value,
