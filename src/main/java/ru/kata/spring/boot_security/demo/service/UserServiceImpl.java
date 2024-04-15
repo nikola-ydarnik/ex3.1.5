@@ -43,18 +43,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public boolean saveUser(User user) {
-//        if (userRepository.findUserByName(user.getName()).isPresent()) {
-//            return false;
-//        }
 
-//        user.getRoles().forEach(role -> {
-//            if (role.getId() == 1) {
-//                roleSerivce.addRole(new Role(1, "ROLE_USER"));
-//            } else if (role.getId() == 2) {
-//                roleSerivce.addRole(new Role(2, "ROLE_ADMIN"));
-//            }
-//        });
-        System.out.println(user.getRoles());
         if (user.getRoles().isEmpty()) {
             user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
         }

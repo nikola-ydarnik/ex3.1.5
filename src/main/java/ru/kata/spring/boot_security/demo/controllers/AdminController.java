@@ -5,12 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleSerivce;
 import ru.kata.spring.boot_security.demo.service.UserService;
-import ru.kata.spring.boot_security.demo.util.UserErrorResponse;
-import ru.kata.spring.boot_security.demo.util.UserNotCreatedException;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -35,8 +34,7 @@ public class AdminController {
     }
 
     @PostMapping()
-    public ResponseEntity<HttpStatus> saveNewUser(@RequestBody @Valid User user,
-                                                  BindingResult bindingResult) {
+    public ResponseEntity<HttpStatus> saveNewUser(@RequestBody @Valid User user) {
         userService.saveUser(user);
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -59,6 +57,16 @@ public class AdminController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    private ResponseEntity<Map<String, String>> handleValidExceptions(MethodArgumentNotValidException methodArgumentNotValidException) {
+//        Map<String, String> errors = new HashMap<>();
+//        methodArgumentNotValidException.getAllErrors().forEach(error -> {
+//            String fieldName = ((FieldError)error).getField();
+//            String errorMsg = error.getDefaultMessage();
+//            errors.put(fieldName, errorMsg);
+//        });
+//        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+//    }
 //    @ExceptionHandler
 //    private ResponseEntity<UserErrorResponse> handleException(UserNotCreatedException e) {
 //        UserErrorResponse response = new UserErrorResponse(
