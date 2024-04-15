@@ -9,8 +9,7 @@ async function EditModalHandler() {
     await fillModal(modalEdit);
 }
 
-const formEdit = document.getElementById("modalBodyEdit");
-document.addEventListener("submit", async function(event){
+modalEdit.addEventListener("submit", async function(event){
     event.preventDefault();
 
     const rolesSelected = document.getElementById("rolesEdit");
