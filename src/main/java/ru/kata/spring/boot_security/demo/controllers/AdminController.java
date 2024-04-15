@@ -37,15 +37,6 @@ public class AdminController {
     @PostMapping()
     public ResponseEntity<HttpStatus> saveNewUser(@RequestBody @Valid User user,
                                                   BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//           StringBuilder errorMsg = new StringBuilder();
-//           for (FieldError error: bindingResult.getFieldErrors()) {
-//               errorMsg.append(error.getField())
-//                       .append(" - ").append(error.getDefaultMessage())
-//                       .append(";");
-//           }
-//           throw new UserNotCreatedException(errorMsg.toString());
-//        }
         userService.saveUser(user);
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -68,14 +59,14 @@ public class AdminController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(UserNotCreatedException e) {
-        UserErrorResponse response = new UserErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler
+//    private ResponseEntity<UserErrorResponse> handleException(UserNotCreatedException e) {
+//        UserErrorResponse response = new UserErrorResponse(
+//                e.getMessage(),
+//                System.currentTimeMillis()
+//        );
+//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//    }
 }
 
 

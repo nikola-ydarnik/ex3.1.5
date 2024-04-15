@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Optional;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -53,10 +54,13 @@ public class UserServiceImpl implements UserService {
 //                roleSerivce.addRole(new Role(2, "ROLE_ADMIN"));
 //            }
 //        });
-        if (user.getRoles() == null) {
+        System.out.println(user.getRoles());
+        if (user.getRoles().isEmpty()) {
             user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
         }
-        user.getRoles().forEach(role -> roleSerivce.addRole(role));
+        user.setRoles(user.getRoles().stream()
+                .map(role -> roleSerivce.getByName(role.getRoleName()))
+                .collect(Collectors.toSet()));
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -83,11 +87,24 @@ public class UserServiceImpl implements UserService {
     }
     @Transactional
     public void updateUser(User user) {
-        if (user.getRoles() == null) {
-            user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
+
+        User userFromDB = userRepository.findUserById(user.getId());
+       // добавил проверку на то: если никакие роли не были выбраны при изменении пользователя,
+        // то тогда должны остаться роли, которые у него уже были, а то с пустыми ролями получались
+        // пользователи
+        if (user.getRoles().isEmpty()) {
+            user.setRoles(userFromDB.getRoles());
+        } else {
+            user.setRoles(user.getRoles().stream()
+                    .map(role -> roleSerivce.getByName(role.getRoleName()))
+                    .collect(Collectors.toSet()));
         }
-        user.getRoles().forEach(role -> roleSerivce.addRole(role));
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+
+        //проверка пароля
+        if (!user.getPassword().equals(userFromDB.getPassword())) {
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        }
+
         userRepository.save(user);
     }
 
