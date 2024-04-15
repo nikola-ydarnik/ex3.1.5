@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
     public void updateUser(User user) {
 
         User userFromDB = userRepository.findUserById(user.getId());
-       // добавил проверку на то: если никакие роли не были выбраны при изменении пользователя,
+         // добавил проверку на то: если никакие роли не были выбраны при изменении пользователя,
         // то тогда должны остаться роли, которые у него уже были, а то с пустыми ролями получались
         // пользователи
         if (user.getRoles().isEmpty()) {
